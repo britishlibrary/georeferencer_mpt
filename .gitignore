@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 config.py
+id_path_df.csv
 csvs/
 georef*/
 mpt*/

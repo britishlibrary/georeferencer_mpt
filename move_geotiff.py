@@ -13,18 +13,18 @@ from os.path import isfile, join
 from os import walk
 
 # Create folders
-if not os.path.isdir('./mpt_imgs'):
-    os.makedirs('./mpt_imgs')
-if not os.path.isdir('./mpt_imgs/tiffs'):
-    os.makedirs('./mpt_imgs/tiffs')
-if not os.path.isdir('./mpt_imgs/moved_geotiffs'):
-    os.makedirs('./mpt_imgs/moved_geotiffs')
-if not os.path.isdir('./mpt_imgs/moved_geotiffs/other'):
-    os.makedirs('./mpt_imgs/moved_geotiffs/other')
+if not os.path.isdir('./mpt_outs'):
+    os.makedirs('./mpt_outs')
+if not os.path.isdir('./mpt_outs/tiffs'):
+    os.makedirs('./mpt_outs/tiffs')
+if not os.path.isdir('./mpt_outs/moved_geotiffs'):
+    os.makedirs('./mpt_outs/moved_geotiffs')
+if not os.path.isdir('./mpt_outs/moved_geotiffs/other'):
+    os.makedirs('./mpt_outs/moved_geotiffs/other')
 collection_df = pd.read_csv('./csvs/georef_collections.csv')
 collections = list(set(collection_df['collection']))
 for c in collections:
-    c_path = './mpt_imgs/moved_geotiffs/' + c
+    c_path = './mpt_outs/moved_geotiffs/' + c
     if not os.path.isdir(c_path):
         os.makedirs(c_path)
 
@@ -42,8 +42,8 @@ geotiff_paths = []
 for p in paths:
     info = gdal.Info(p, format='json')
     if info['coordinateSystem']['wkt'] == '':
-        # copy file to mpt_imgs
-        shutil.copy(p, './mpt_imgs/tiffs/' + os.path.basename(p))
+        # copy file to mpt_outs
+        shutil.copy(p, './mpt_outs/tiffs/' + os.path.basename(p))
     else:
         geotiff_paths.append(p)
 
@@ -74,16 +74,16 @@ for i, row in id_path_df.iterrows():
         if Path(row['path_geotiff']).stem == row['id']:
             filename = row['filename']
         else:
-            if not os.path.isdir('./mpt_imgs/moved_geotiffs/' + collection + '/id_changed'):
-                os.makedirs('./mpt_imgs/moved_geotiffs/' + collection + '/id_changed')
+            if not os.path.isdir('./mpt_outs/moved_geotiffs/' + collection + '/id_changed'):
+                os.makedirs('./mpt_outs/moved_geotiffs/' + collection + '/id_changed')
             filename = 'id_changed/' + row['id'] + '.tif'
 
-        dst_path = './mpt_imgs/moved_geotiffs/' + collection + '/' + filename
+        dst_path = './mpt_outs/moved_geotiffs/' + collection + '/' + filename
         shutil.copyfile(row['path_geotiff'], dst_path)
 
 # Remove unused collection folders
 for c in collections:
-    c_path = './mpt_imgs/moved_geotiffs/' + c
+    c_path = './mpt_outs/moved_geotiffs/' + c
     if len(os.listdir(c_path)) == 0: # Check if the folder is empty
         shutil.rmtree(c_path)
 
